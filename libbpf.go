@@ -99,12 +99,12 @@ func (m *KABPFMap) ValueSize() int {
 	return m.bpfMap.ValueSize()
 }
 
-// Get map value
+// Lookup map element
 func (m *KABPFMap) LookupElement(key unsafe.Pointer) ([]byte, error) {
 	return m.bpfMap.GetValue(key)
 }
 
-// Get map value
+// Update map element
 func (m *KABPFMap) UpdateElement(key, value unsafe.Pointer) error {
 	return m.bpfMap.Update(key, value)
 }
