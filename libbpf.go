@@ -109,6 +109,11 @@ func (m *KABPFMap) UpdateElement(key, value unsafe.Pointer) error {
 	return m.bpfMap.Update(key, value)
 }
 
+// Delete map element
+func (m *KABPFMap) DeleteElement(key unsafe.Pointer) error {
+	return m.bpfMap.DeleteKey(key)
+}
+
 // Get object pointer to which map belongs
 func (m *KABPFMap) GetObject() *KABPFObject {
 	return &KABPFObject{
