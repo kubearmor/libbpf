@@ -1,3 +1,6 @@
+// Copyright 2021 Authors of kubearmor/libbpf
+// SPDX-License-Identifier: Apache-2.0
+
 package libbpf
 
 import (
