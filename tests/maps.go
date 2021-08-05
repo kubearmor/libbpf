@@ -4,8 +4,11 @@
 package main
 
 import (
+	"encoding/binary"
+	"errors"
 	"fmt"
 	"os"
+	"unsafe"
 
 	lbpf "github.com/kubearmor/libbpf"
 )
@@ -31,6 +34,31 @@ func printMapInfo(m *lbpf.KABPFMap) {
 	fmt.Println("Map Max Entries:", m.MaxEntries())
 }
 
+// Test map element management
+func testMapElementManagement(m *lbpf.KABPFMap) {
+	var err error
+	var key uint32 = 0
+	var value1 uint32 = 1337
+	var value2 []byte
+
+	fmt.Println()
+	fmt.Println("Testing element management methods: started")
+
+	err = m.UpdateElement(unsafe.Pointer(&key), unsafe.Pointer(&value1))
+	exitIfError(err)
+
+	value2, err = m.LookupElement(unsafe.Pointer(&key))
+	exitIfError(err)
+	if binary.LittleEndian.Uint32(value2) != value1 {
+		exitIfError(errors.New("value1 is not equal to value2"))
+	}
+
+	err = m.DeleteElement(unsafe.Pointer(&key))
+	exitIfError(err)
+
+	fmt.Println("Testing element management methods: all good")
+}
+
 func main() {
 	var err error
 	var bpfObj *lbpf.KABPFObject
@@ -53,4 +81,6 @@ func main() {
 	exitIfError(err)
 
 	printMapInfo(bpfMap2)
+
+	testMapElementManagement(bpfMap1)
 }
