@@ -117,8 +117,8 @@ $(TESTS): % : %.go
 .PHONY: run-tests
 run-tests: $(TESTS)
 	@for test in $^; do \
-		cd $(TESTSDIR); \
 		echo -e "\nINFO: running test $${test}"; \
+		cd $(TESTSDIR); \
 		sudo $${test}; \
 	done
 
