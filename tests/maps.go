@@ -64,7 +64,7 @@ func main() {
 	var bpfObj *lbpf.KABPFObject
 	var bpfMap1, bpfMap2 *lbpf.KABPFMap
 
-	bpfObj, err = lbpf.OpenObjectFromFile("maps.bpf.o")
+	bpfObj, err = lbpf.OpenObjectFromFile("./maps.bpf.o")
 	exitIfError(err)
 	defer bpfObj.Close()
 
