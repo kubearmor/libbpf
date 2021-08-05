@@ -24,7 +24,7 @@ endif
 OUTPUTDIR = ./output
 
 .PHONY: all
-all: libbpf vmlinuxh
+all: libbpf vmlinuxh bpfobj
 
 
 # libbpf
@@ -80,6 +80,23 @@ ifeq ($(wildcard $@), )
 endif
 
 
+# bpf objects
+
+CLANG      = clang
+CLANGFLAGS = -g -O2 -c -target bpf
+CLANGINC   = $(OUTPUTDIR)
+BPFOBJDIR  = $(abspath ./tests)
+BPFS_C     = $(wildcard $(BPFOBJDIR)/*.bpf.c)
+BPFS_O     = $(BPFS_C:.c=.o)
+
+.PHONY: bpfobj
+bpfobj: libbpf vmlinuxh $(BPFS_O)
+
+$(BPFOBJDIR)/%.o: $(BPFOBJDIR)/%.c
+	$(info INFO: compiling bpf object $@)
+	$(Q)$(CLANG) $(CLANGFLAGS) -I $(CLANGINC) -o $@ $<
+
+
 # output
 
 $(OUTPUTDIR):
@@ -89,4 +106,4 @@ $(OUTPUTDIR):
 # cleanup
 
 clean:
-	$(Q)rm -rf $(OUTPUTDIR)
+	$(Q)rm -rf $(OUTPUTDIR) $(BPFS_O)
