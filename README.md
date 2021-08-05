@@ -31,3 +31,9 @@ However, currently, the most common is to use the `libbpf.a` (static version). T
 The same environment variable need to be set when building the final application that uses this library.
 
 `❯ CGO_LDFLAGS="./output/libbpf.a" go build`
+
+---
+
+The use cases inside `./tests` can be tested using make.
+
+`❯ make run-tests`
