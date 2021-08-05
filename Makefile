@@ -106,7 +106,7 @@ TESTS    = $(TESTS_GO:.go=)
 .PHONY: tests
 tests: bpfobj $(TESTS)
 
-$(TESTS): % : %.go
+$(TESTS): % : %.go | bpfobj
 	$(info INFO: compiling test $@)
 	$(Q)CGO_LDFLAGS=$(LIBBPFOBJ) \
 		go build -o $@ $^
@@ -116,10 +116,9 @@ $(TESTS): % : %.go
 
 .PHONY: run-tests
 run-tests: $(TESTS)
-	@for test in $^; do \
+	$(Q)for test in $^; do \
 		echo -e "\nINFO: running test $${test}"; \
-		cd $(TESTSDIR); \
-		sudo $${test}; \
+		cd $(TESTSDIR); sudo $${test}; \
 	done
 
 
