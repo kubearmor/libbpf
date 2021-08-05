@@ -8,7 +8,7 @@ struct {
 	__uint(type, BPF_MAP_TYPE_HASH);
 	__type(key, u32);
 	__type(value, u32);
-    __uint(max_entries, 1 << 13);
+	__uint(max_entries, 1 << 13);
 	__uint(pinning, LIBBPF_PIN_BY_NAME);
 } pinned_map SEC(".maps");
 
@@ -16,7 +16,7 @@ struct {
 	__uint(type, BPF_MAP_TYPE_HASH);
 	__type(key, u32);
 	__type(value, u32);
-    __uint(max_entries, 1 << 12);
+	__uint(max_entries, 1 << 12);
 } unpinned_map SEC(".maps");
 
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
