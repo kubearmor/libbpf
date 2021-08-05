@@ -24,7 +24,7 @@ endif
 OUTPUTDIR = ./output
 
 .PHONY: all
-all: libbpf vmlinuxh bpfobj
+all: libbpf vmlinuxh bpfobj tests
 
 
 # libbpf
@@ -97,6 +97,32 @@ $(BPFOBJDIR)/%.o: $(BPFOBJDIR)/%.c
 	$(Q)$(CLANG) $(CLANGFLAGS) -I $(CLANGINC) -o $@ $<
 
 
+# tests
+
+TESTSDIR = $(abspath ./tests)
+TESTS_GO = $(wildcard $(TESTSDIR)/*.go)
+TESTS    = $(TESTS_GO:.go=)
+
+.PHONY: tests
+tests: bpfobj $(TESTS)
+
+$(TESTS): % : %.go
+	$(info INFO: compiling test $@)
+	$(Q)CGO_LDFLAGS=$(LIBBPFOBJ) \
+		go build -o $@ $^
+
+
+# run tests
+
+.PHONY: run-tests
+run-tests: $(TESTS)
+	@for test in $^; do \
+		cd $(TESTSDIR); \
+		echo -e "\nINFO: running test $${test}"; \
+		sudo $${test}; \
+	done
+
+
 # output
 
 $(OUTPUTDIR):
@@ -106,4 +132,4 @@ $(OUTPUTDIR):
 # cleanup
 
 clean:
-	$(Q)rm -rf $(OUTPUTDIR) $(BPFS_O)
+	$(Q)rm -rf $(OUTPUTDIR) $(BPFS_O) $(TESTS)
