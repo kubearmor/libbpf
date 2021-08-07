@@ -118,7 +118,7 @@ func (m *KABPFMap) DeleteElement(key unsafe.Pointer) error {
 }
 
 // Get object pointer to which map belongs
-func (m *KABPFMap) GetObject() *KABPFObject {
+func (m *KABPFMap) Object() *KABPFObject {
 	return &KABPFObject{
 		bpfObj: m.bpfMap.GetModule(),
 	}
