@@ -25,6 +25,7 @@ func exitIfError(err error) {
 // Print map information
 func printMapInfo(m *lbpf.KABPFMap) {
 	fmt.Println()
+	fmt.Println("Map Object:     ", unsafe.Pointer(m.Object()))
 	fmt.Println("Map Name:       ", m.Name())
 	fmt.Println("Map FD:         ", m.FD())
 	fmt.Println("Map Pinned:     ", m.IsPinned())

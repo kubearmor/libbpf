@@ -7,6 +7,45 @@ import (
 	"unsafe"
 
 	"github.com/aquasecurity/libbpfgo"
+	unix "golang.org/x/sys/unix"
+)
+
+import "C"
+
+type KABPFProgType uint32
+
+const (
+	KABPFProgTypeUnspec                KABPFProgType = unix.BPF_PROG_TYPE_UNSPEC
+	KABPFProgTypeSocketFilter                        = unix.BPF_PROG_TYPE_SOCKET_FILTER
+	KABPFProgTypeKprobe                              = unix.BPF_PROG_TYPE_KPROBE
+	KABPFProgTypeSchedCls                            = unix.BPF_PROG_TYPE_SCHED_CLS
+	KABPFProgTypeSchedAct                            = unix.BPF_PROG_TYPE_SCHED_ACT
+	KABPFProgTypeTracepoint                          = unix.BPF_PROG_TYPE_TRACEPOINT
+	KABPFProgTypeXDP                                 = unix.BPF_PROG_TYPE_XDP
+	KABPFProgTypePerfEvent                           = unix.BPF_PROG_TYPE_PERF_EVENT
+	KABPFProgTypeCgroupSKB                           = unix.BPF_PROG_TYPE_CGROUP_SKB
+	KABPFProgTypeCgroupSock                          = unix.BPF_PROG_TYPE_CGROUP_SOCK
+	KABPFProgTypeLwtIn                               = unix.BPF_PROG_TYPE_LWT_IN
+	KABPFProgTypeLwtOut                              = unix.BPF_PROG_TYPE_LWT_OUT
+	KABPFProgTypeLwtXmit                             = unix.BPF_PROG_TYPE_LWT_XMIT
+	KABPFProgTypeSockOps                             = unix.BPF_PROG_TYPE_SOCK_OPS
+	KABPFProgTypeSkSKB                               = unix.BPF_PROG_TYPE_SK_SKB
+	KABPFProgTypeCgroupDevice                        = unix.BPF_PROG_TYPE_CGROUP_DEVICE
+	KABPFProgTypeSkMsg                               = unix.BPF_PROG_TYPE_SK_MSG
+	KABPFProgTypeRawTracepoint                       = unix.BPF_PROG_TYPE_RAW_TRACEPOINT
+	KABPFProgTypeCgroupSockAddr                      = unix.BPF_PROG_TYPE_CGROUP_SOCK_ADDR
+	KABPFProgTypeLwtSeg6Local                        = unix.BPF_PROG_TYPE_LWT_SEG6LOCAL
+	KABPFProgTypeLircMode2                           = unix.BPF_PROG_TYPE_LIRC_MODE2
+	KABPFProgTypeSkReuseport                         = unix.BPF_PROG_TYPE_SK_REUSEPORT
+	KABPFProgTypeFlowDissector                       = unix.BPF_PROG_TYPE_FLOW_DISSECTOR
+	KABPFProgTypeCgroupSysctl                        = unix.BPF_PROG_TYPE_CGROUP_SYSCTL
+	KABPFProgTypeRawTracepointWritable               = unix.BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE
+	KABPFProgTypeCgroupSockopt                       = unix.BPF_PROG_TYPE_CGROUP_SOCKOPT
+	KABPFProgTypeTracing                             = unix.BPF_PROG_TYPE_TRACING
+	KABPFProgTypeStructOps                           = unix.BPF_PROG_TYPE_STRUCT_OPS
+	KABPFProgTypeExt                                 = unix.BPF_PROG_TYPE_EXT
+	KABPFProgTypeLSM                                 = unix.BPF_PROG_TYPE_LSM
+	KABPFProgTypeSkLookup                            = unix.BPF_PROG_TYPE_SK_LOOKUP
 )
 
 // KubeArmor BPFObject wrapper structure
@@ -16,7 +55,24 @@ type KABPFObject struct {
 
 // KubeArmor BPFMap wrapper structure
 type KABPFMap struct {
+	bpfObj *KABPFObject
+
 	bpfMap *libbpfgo.BPFMap
+}
+
+// KubeArmor BPFProgram wrapper structure
+type KABPFProgram struct {
+	bpfObj *KABPFObject
+
+	bpfProg *libbpfgo.BPFProg
+}
+
+// KubeArmor BPFLink wrapper structure
+type KABPFLink struct {
+	bpfProg  *KABPFProgram
+	funcName string
+
+	bpfLink *libbpfgo.BPFLink
 }
 
 // Open object file
@@ -43,7 +99,18 @@ func (o *KABPFObject) FindMapByName(mapName string) (*KABPFMap, error) {
 	m, err := o.bpfObj.GetMap(mapName)
 
 	return &KABPFMap{
+		bpfObj: o,
 		bpfMap: m,
+	}, err
+}
+
+// Get program from object
+func (o *KABPFObject) FindProgramByName(progName string) (*KABPFProgram, error) {
+	p, err := o.bpfObj.GetProgram(progName)
+
+	return &KABPFProgram{
+		bpfObj:  o,
+		bpfProg: p,
 	}, err
 }
 
@@ -119,7 +186,59 @@ func (m *KABPFMap) DeleteElement(key unsafe.Pointer) error {
 
 // Get object pointer to which map belongs
 func (m *KABPFMap) Object() *KABPFObject {
-	return &KABPFObject{
-		bpfObj: m.bpfMap.GetModule(),
-	}
+	return m.bpfObj
+}
+
+// Get program fd
+func (p *KABPFProgram) FD() int {
+	return int(p.bpfProg.GetFd())
+}
+
+// Get program name
+func (p *KABPFProgram) Name() string {
+	return p.bpfProg.GetName()
+}
+
+// Get program type
+func (p *KABPFProgram) GetType() KABPFProgType {
+	return KABPFProgType(p.bpfProg.GetType())
+}
+
+// Attach Kprobe
+// This should be used for kernels > 4.17
+func (p *KABPFProgram) AttachKprobe(funcName string) (*KABPFLink, error) {
+	l, err := p.bpfProg.AttachKprobe(funcName)
+
+	return &KABPFLink{
+		bpfProg:  p,
+		funcName: funcName,
+		bpfLink:  l,
+	}, err
+}
+
+// Attach Kretprobe
+// This should be used for kernels > 4.17
+func (p *KABPFProgram) AttachKretprobe(funcName string) (*KABPFLink, error) {
+	l, err := p.bpfProg.AttachKretprobe(funcName)
+
+	return &KABPFLink{
+		bpfProg:  p,
+		funcName: funcName,
+		bpfLink:  l,
+	}, err
+}
+
+// Get object pointer to which program belongs
+func (p *KABPFProgram) Object() *KABPFObject {
+	return p.bpfObj
+}
+
+// Get attached function name
+func (l *KABPFLink) FunctionName() string {
+	return l.funcName
+}
+
+// Get program pointer to which link belongs
+func (l *KABPFLink) Program() *KABPFProgram {
+	return l.bpfProg
 }
