@@ -27,7 +27,7 @@ INCDIR = ./include
 all: libbpf vmlinuxh bpfobj tests
 
 
-# libbpf
+# C libbpf
 
 CC     = gcc
 CFLAGS = -g -O2 -Werror -Wall -fpie
@@ -109,7 +109,7 @@ TESTS    = $(TESTS_GO:.go=)
 .PHONY: tests
 tests: bpfobj $(TESTS)
 
-$(TESTS): % : %.go | bpfobj
+$(TESTS): % : %.go
 	$(info INFO: compiling test $@)
 	$(Q)CGO_LDFLAGS=$(LIBBPFOBJ) \
 		go build -o $@ $^
@@ -125,7 +125,7 @@ run-tests: $(TESTS)
 	done
 
 
-# output
+# intermediary output
 
 $(INCDIR):
 	$(Q)mkdir -p $@
