@@ -56,12 +56,14 @@ type KABPFObject struct {
 // KubeArmor BPFMap wrapper structure
 type KABPFMap struct {
 	bpfObj *KABPFObject
+
 	bpfMap *libbpfgo.BPFMap
 }
 
 // KubeArmor BPFProgram wrapper structure
 type KABPFProgram struct {
-	bpfObj  *KABPFObject
+	bpfObj *KABPFObject
+
 	bpfProg *libbpfgo.BPFProg
 }
 
@@ -69,7 +71,8 @@ type KABPFProgram struct {
 type KABPFLink struct {
 	bpfProg  *KABPFProgram
 	funcName string
-	bpfLink  *libbpfgo.BPFLink
+
+	bpfLink *libbpfgo.BPFLink
 }
 
 // Open object file
