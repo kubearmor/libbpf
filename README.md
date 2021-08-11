@@ -22,15 +22,15 @@ However, currently, the most common is to use the `libbpf.a` (static version). T
 
   `❯ make`
 
-  This will generate the static `libbpf.a` file and the `vmlinux.h` and `bpf/*.h` headers inside `./output`.
+  This will generate the static `libbpf.a` file and the `vmlinux.h` and `bpf/*.h` headers inside `./include`.
 
 - Now one is able to make correct use of this library.
 
-  `❯ CGO_LDFLAGS="./output/libbpf.a" go get github.com/kubearmor/libbpf`
+  `❯ CGO_LDFLAGS="./include/libbpf.a" go get github.com/kubearmor/libbpf`
 
 The same environment variable need to be set when building the final application that uses this library.
 
-`❯ CGO_LDFLAGS="./output/libbpf.a" go build`
+`❯ CGO_LDFLAGS="./include/libbpf.a" go build`
 
 ---
 
