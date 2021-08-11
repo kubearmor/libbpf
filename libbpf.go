@@ -16,6 +16,7 @@ type KABPFObject struct {
 
 // KubeArmor BPFMap wrapper structure
 type KABPFMap struct {
+	bpfObj *KABPFObject
 	bpfMap *libbpfgo.BPFMap
 }
 
@@ -43,6 +44,7 @@ func (o *KABPFObject) FindMapByName(mapName string) (*KABPFMap, error) {
 	m, err := o.bpfObj.GetMap(mapName)
 
 	return &KABPFMap{
+		bpfObj: o,
 		bpfMap: m,
 	}, err
 }
@@ -119,7 +121,5 @@ func (m *KABPFMap) DeleteElement(key unsafe.Pointer) error {
 
 // Get object pointer to which map belongs
 func (m *KABPFMap) Object() *KABPFObject {
-	return &KABPFObject{
-		bpfObj: m.bpfMap.GetModule(),
-	}
+	return m.bpfObj
 }
