@@ -37,3 +37,29 @@ The same environment variable need to be set when building the final application
 The use cases inside `./tests` can be tested using make.
 
 `❯ make run-tests`
+
+---
+
+### KABPFMapElement interface
+
+To satisfy `KABPFMapElement` interface, it's necessary to implement the following methods for an XXMapElem.
+
+```go
+func (pme *XXMapElem) KeyPointer() unsafe.Pointer {
+	...
+}
+
+func (pme *XXMapElem) ValuePointer() unsafe.Pointer {
+	...
+}
+
+func (pme *XXMapElem) SetFoundValue(value []byte) {
+	...
+}
+
+func (pme *XXMapElem) MapName() string {
+	return "map_name"
+}
+```
+
+Examples can be found in [tests](tests/).

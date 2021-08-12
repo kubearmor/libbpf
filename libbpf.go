@@ -64,7 +64,9 @@ type KABPFMap struct {
 type KABPFMapElement interface {
 	KeyPointer() unsafe.Pointer
 	ValuePointer() unsafe.Pointer
-	SetValue(value []byte)
+	MapName() string
+
+	SetFoundValue(value []byte)
 }
 
 // KubeArmor BPFProgram wrapper structure
@@ -189,7 +191,7 @@ func (m *KABPFMap) ValueSize() int {
 // The elem will have its value updated
 func (m *KABPFMap) LookupElement(elem KABPFMapElement) ([]byte, error) {
 	val, err := m.bpfMap.GetValue(elem.KeyPointer())
-	elem.SetValue(val)
+	elem.SetFoundValue(val)
 
 	return val, err
 }
