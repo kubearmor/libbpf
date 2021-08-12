@@ -109,7 +109,7 @@ TESTS    = $(TESTS_GO:.go=)
 .PHONY: tests
 tests: bpfobj $(TESTS)
 
-$(TESTS): % : %.go
+$(TESTS): % : %.go | bpfobj
 	$(info INFO: compiling test $@)
 	$(Q)CGO_LDFLAGS=$(LIBBPFOBJ) \
 		go build -o $@ $^
