@@ -78,10 +78,13 @@ type KABPFLink struct {
 // Open object file
 func OpenObjectFromFile(bpfObjFile string) (*KABPFObject, error) {
 	mod, err := libbpfgo.NewModuleFromFile(bpfObjFile)
+	if err != nil {
+		return nil, err
+	}
 
 	return &KABPFObject{
 		bpfObj: mod,
-	}, err
+	}, nil
 }
 
 // Load object
@@ -97,21 +100,27 @@ func (o *KABPFObject) Close() {
 // Get map from object
 func (o *KABPFObject) FindMapByName(mapName string) (*KABPFMap, error) {
 	m, err := o.bpfObj.GetMap(mapName)
+	if err != nil {
+		return nil, err
+	}
 
 	return &KABPFMap{
 		bpfObj: o,
 		bpfMap: m,
-	}, err
+	}, nil
 }
 
 // Get program from object
 func (o *KABPFObject) FindProgramByName(progName string) (*KABPFProgram, error) {
 	p, err := o.bpfObj.GetProgram(progName)
+	if err != nil {
+		return nil, err
+	}
 
 	return &KABPFProgram{
 		bpfObj:  o,
 		bpfProg: p,
-	}, err
+	}, nil
 }
 
 // Get map fd
@@ -208,24 +217,30 @@ func (p *KABPFProgram) GetType() KABPFProgType {
 // This should be used for kernels > 4.17
 func (p *KABPFProgram) AttachKprobe(funcName string) (*KABPFLink, error) {
 	l, err := p.bpfProg.AttachKprobe(funcName)
+	if err != nil {
+		return nil, err
+	}
 
 	return &KABPFLink{
 		bpfProg:  p,
 		funcName: funcName,
 		bpfLink:  l,
-	}, err
+	}, nil
 }
 
 // Attach Kretprobe
 // This should be used for kernels > 4.17
 func (p *KABPFProgram) AttachKretprobe(funcName string) (*KABPFLink, error) {
 	l, err := p.bpfProg.AttachKretprobe(funcName)
+	if err != nil {
+		return nil, err
+	}
 
 	return &KABPFLink{
 		bpfProg:  p,
 		funcName: funcName,
 		bpfLink:  l,
-	}, err
+	}, nil
 }
 
 // Get object pointer to which program belongs
