@@ -60,6 +60,13 @@ type KABPFMap struct {
 	bpfMap *libbpfgo.BPFMap
 }
 
+// KubeArmor BPFMap Element interface
+type KABPFMapElement interface {
+	KeyPointer() unsafe.Pointer
+	ValuePointer() unsafe.Pointer
+	SetValue(value []byte)
+}
+
 // KubeArmor BPFProgram wrapper structure
 type KABPFProgram struct {
 	bpfObj *KABPFObject
@@ -179,18 +186,22 @@ func (m *KABPFMap) ValueSize() int {
 }
 
 // Lookup map element
-func (m *KABPFMap) LookupElement(key unsafe.Pointer) ([]byte, error) {
-	return m.bpfMap.GetValue(key)
+// The elem will have its value updated
+func (m *KABPFMap) LookupElement(elem KABPFMapElement) ([]byte, error) {
+	val, err := m.bpfMap.GetValue(elem.KeyPointer())
+	elem.SetValue(val)
+
+	return val, err
 }
 
 // Update map element
-func (m *KABPFMap) UpdateElement(key, value unsafe.Pointer) error {
-	return m.bpfMap.Update(key, value)
+func (m *KABPFMap) UpdateElement(elem KABPFMapElement) error {
+	return m.bpfMap.Update(elem.KeyPointer(), elem.ValuePointer())
 }
 
 // Delete map element
-func (m *KABPFMap) DeleteElement(key unsafe.Pointer) error {
-	return m.bpfMap.DeleteKey(key)
+func (m *KABPFMap) DeleteElement(elem KABPFMapElement) error {
+	return m.bpfMap.DeleteKey(elem.KeyPointer())
 }
 
 // Get object pointer to which map belongs

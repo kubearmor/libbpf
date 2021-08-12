@@ -13,6 +13,28 @@ import (
 	lbpf "github.com/kubearmor/libbpf"
 )
 
+// These fields can be private using getters and setters
+// Just to make this example straightforward, they are public
+type PinnedMapElem struct {
+	Key   uint32
+	Value uint32
+}
+
+// Method to satisfy KABPFMapElement interface
+func (pme *PinnedMapElem) KeyPointer() unsafe.Pointer {
+	return unsafe.Pointer(&pme.Key)
+}
+
+// Method to satisfy KABPFMapElement interface
+func (pme *PinnedMapElem) ValuePointer() unsafe.Pointer {
+	return unsafe.Pointer(&pme.Value)
+}
+
+// Method to satisfy KABPFMapElement interface
+func (pme *PinnedMapElem) SetValue(value []byte) {
+	pme.Value = binary.LittleEndian.Uint32(value)
+}
+
 // Exit if err is not nil
 // Don't use this in production
 func exitIfError(err error) {
@@ -36,25 +58,33 @@ func printMapInfo(m *lbpf.KABPFMap) {
 }
 
 // Test map element management
-func testMapElementManagement(m *lbpf.KABPFMap) {
+func testPinnedMapElementManagement(m *lbpf.KABPFMap) {
 	var err error
-	var key uint32 = 0
-	var value1 uint32 = 1337
-	var value2 []byte
+	var pme PinnedMapElem
+	var retValue []byte
 
 	fmt.Println()
 	fmt.Println("Testing element management methods: started")
 
-	err = m.UpdateElement(unsafe.Pointer(&key), unsafe.Pointer(&value1))
+	pme.Key = 0
+	pme.Value = 1337
+	err = m.UpdateElement(&pme)
 	exitIfError(err)
 
-	value2, err = m.LookupElement(unsafe.Pointer(&key))
+	pme.Value = 0
+	// retValue could be dropped since pme.Value will be updated after this call
+	retValue, err = m.LookupElement(&pme)
 	exitIfError(err)
-	if binary.LittleEndian.Uint32(value2) != value1 {
-		exitIfError(errors.New("value1 is not equal to value2"))
+
+	if pme.Value != 1337 {
+		exitIfError(errors.New("pme.Value is not equal to 1337"))
 	}
 
-	err = m.DeleteElement(unsafe.Pointer(&key))
+	if uint32(binary.LittleEndian.Uint32(retValue)) != pme.Value {
+		exitIfError(errors.New("retValue is not equal to 1337"))
+	}
+
+	err = m.DeleteElement(&pme)
 	exitIfError(err)
 
 	fmt.Println("Testing element management methods: all good")
@@ -83,5 +113,5 @@ func main() {
 
 	printMapInfo(bpfMap2)
 
-	testMapElementManagement(bpfMap1)
+	testPinnedMapElementManagement(bpfMap1)
 }
