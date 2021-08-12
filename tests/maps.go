@@ -31,8 +31,13 @@ func (pme *PinnedMapElem) ValuePointer() unsafe.Pointer {
 }
 
 // Method to satisfy KABPFMapElement interface
-func (pme *PinnedMapElem) SetValue(value []byte) {
+func (pme *PinnedMapElem) SetFoundValue(value []byte) {
 	pme.Value = binary.LittleEndian.Uint32(value)
+}
+
+// Method to satisfy KABPFMapElement interface
+func (pme *PinnedMapElem) MapName() string {
+	return "pinned_map"
 }
 
 // Exit if err is not nil
@@ -57,6 +62,15 @@ func printMapInfo(m *lbpf.KABPFMap) {
 	fmt.Println("Map Max Entries:", m.MaxEntries())
 }
 
+// Print map element information
+func printMapElemInfo(me lbpf.KABPFMapElement) {
+	fmt.Println()
+	fmt.Println("Map Name:         ", me.MapName())
+	fmt.Println("Map Key Pointer:  ", me.KeyPointer())
+	fmt.Println("Map Value Pointer:", me.ValuePointer())
+	fmt.Println()
+}
+
 // Test map element management
 func testPinnedMapElementManagement(m *lbpf.KABPFMap) {
 	var err error
@@ -65,6 +79,8 @@ func testPinnedMapElementManagement(m *lbpf.KABPFMap) {
 
 	fmt.Println()
 	fmt.Println("Testing element management methods: started")
+
+	printMapElemInfo(&pme)
 
 	pme.Key = 0
 	pme.Value = 1337
