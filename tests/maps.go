@@ -49,6 +49,15 @@ func exitIfError(err error) {
 	}
 }
 
+// Exit if err is nil
+// Don't use this in production
+func exitIfNotError(err error) {
+	if err == nil {
+		fmt.Println("Should be an error")
+		os.Exit(-1)
+	}
+}
+
 // Print map information
 func printMapInfo(m *lbpf.KABPFMap) {
 	fmt.Println()
@@ -102,6 +111,9 @@ func testPinnedMapElementManagement(m *lbpf.KABPFMap) {
 
 	err = m.DeleteElement(&pme)
 	exitIfError(err)
+
+	retValue, err = m.LookupElement(&pme)
+	exitIfNotError(err)
 
 	fmt.Println("Testing element management methods: all good")
 }

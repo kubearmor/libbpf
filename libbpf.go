@@ -191,6 +191,10 @@ func (m *KABPFMap) ValueSize() int {
 // The elem will have its value updated
 func (m *KABPFMap) LookupElement(elem KABPFMapElement) ([]byte, error) {
 	val, err := m.bpfMap.GetValue(elem.KeyPointer())
+	if err != nil {
+		return nil, err
+	}
+
 	elem.SetFoundValue(val)
 
 	return val, err
