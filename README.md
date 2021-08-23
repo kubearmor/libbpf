@@ -8,6 +8,20 @@ One will only be able to `go get` and to use this go module (library) setting th
 
 ---
 
+## General Dependencies
+
+### Ubuntu
+
+`linux-tools-generic`
+
+`libelf-dev`
+
+`zlib1g-dev`
+
+`clang`
+
+---
+
 One way is to use the shared library `libbpf.so` if it is already installed.
 
 `❯ CGO_LDFLAGS="/usr/lib/libbpf.so" go get github.com/kubearmor/libbpf`
