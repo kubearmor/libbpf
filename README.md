@@ -22,6 +22,8 @@ One will only be able to `go get` and to use this go module (library) setting th
 
 ---
 
+## Using this library
+
 One way is to use the shared library `libbpf.so` if it is already installed.
 
 `❯ CGO_LDFLAGS="/usr/lib/libbpf.so" go get github.com/kubearmor/libbpf`
@@ -46,7 +48,7 @@ The same environment variable need to be set when building the final application
 
 `❯ CGO_LDFLAGS="/path_to_this_repo/include/libbpf.a" CGO_CFLAGS="-I /path_to_this_repo/include" go build`
 
----
+### Testing it
 
 The use cases inside [tests](tests/) can be tested using make.
 
