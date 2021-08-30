@@ -16,36 +16,36 @@ type KABPFProgType uint32
 
 const (
 	KABPFProgTypeUnspec                KABPFProgType = unix.BPF_PROG_TYPE_UNSPEC
-	KABPFProgTypeSocketFilter                        = unix.BPF_PROG_TYPE_SOCKET_FILTER
-	KABPFProgTypeKprobe                              = unix.BPF_PROG_TYPE_KPROBE
-	KABPFProgTypeSchedCls                            = unix.BPF_PROG_TYPE_SCHED_CLS
-	KABPFProgTypeSchedAct                            = unix.BPF_PROG_TYPE_SCHED_ACT
-	KABPFProgTypeTracepoint                          = unix.BPF_PROG_TYPE_TRACEPOINT
-	KABPFProgTypeXDP                                 = unix.BPF_PROG_TYPE_XDP
-	KABPFProgTypePerfEvent                           = unix.BPF_PROG_TYPE_PERF_EVENT
-	KABPFProgTypeCgroupSKB                           = unix.BPF_PROG_TYPE_CGROUP_SKB
-	KABPFProgTypeCgroupSock                          = unix.BPF_PROG_TYPE_CGROUP_SOCK
-	KABPFProgTypeLwtIn                               = unix.BPF_PROG_TYPE_LWT_IN
-	KABPFProgTypeLwtOut                              = unix.BPF_PROG_TYPE_LWT_OUT
-	KABPFProgTypeLwtXmit                             = unix.BPF_PROG_TYPE_LWT_XMIT
-	KABPFProgTypeSockOps                             = unix.BPF_PROG_TYPE_SOCK_OPS
-	KABPFProgTypeSkSKB                               = unix.BPF_PROG_TYPE_SK_SKB
-	KABPFProgTypeCgroupDevice                        = unix.BPF_PROG_TYPE_CGROUP_DEVICE
-	KABPFProgTypeSkMsg                               = unix.BPF_PROG_TYPE_SK_MSG
-	KABPFProgTypeRawTracepoint                       = unix.BPF_PROG_TYPE_RAW_TRACEPOINT
-	KABPFProgTypeCgroupSockAddr                      = unix.BPF_PROG_TYPE_CGROUP_SOCK_ADDR
-	KABPFProgTypeLwtSeg6Local                        = unix.BPF_PROG_TYPE_LWT_SEG6LOCAL
-	KABPFProgTypeLircMode2                           = unix.BPF_PROG_TYPE_LIRC_MODE2
-	KABPFProgTypeSkReuseport                         = unix.BPF_PROG_TYPE_SK_REUSEPORT
-	KABPFProgTypeFlowDissector                       = unix.BPF_PROG_TYPE_FLOW_DISSECTOR
-	KABPFProgTypeCgroupSysctl                        = unix.BPF_PROG_TYPE_CGROUP_SYSCTL
-	KABPFProgTypeRawTracepointWritable               = unix.BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE
-	KABPFProgTypeCgroupSockopt                       = unix.BPF_PROG_TYPE_CGROUP_SOCKOPT
-	KABPFProgTypeTracing                             = unix.BPF_PROG_TYPE_TRACING
-	KABPFProgTypeStructOps                           = unix.BPF_PROG_TYPE_STRUCT_OPS
-	KABPFProgTypeExt                                 = unix.BPF_PROG_TYPE_EXT
-	KABPFProgTypeLSM                                 = unix.BPF_PROG_TYPE_LSM
-	KABPFProgTypeSkLookup                            = unix.BPF_PROG_TYPE_SK_LOOKUP
+	KABPFProgTypeSocketFilter          KABPFProgType = unix.BPF_PROG_TYPE_SOCKET_FILTER
+	KABPFProgTypeKprobe                KABPFProgType = unix.BPF_PROG_TYPE_KPROBE
+	KABPFProgTypeSchedCls              KABPFProgType = unix.BPF_PROG_TYPE_SCHED_CLS
+	KABPFProgTypeSchedAct              KABPFProgType = unix.BPF_PROG_TYPE_SCHED_ACT
+	KABPFProgTypeTracepoint            KABPFProgType = unix.BPF_PROG_TYPE_TRACEPOINT
+	KABPFProgTypeXDP                   KABPFProgType = unix.BPF_PROG_TYPE_XDP
+	KABPFProgTypePerfEvent             KABPFProgType = unix.BPF_PROG_TYPE_PERF_EVENT
+	KABPFProgTypeCgroupSKB             KABPFProgType = unix.BPF_PROG_TYPE_CGROUP_SKB
+	KABPFProgTypeCgroupSock            KABPFProgType = unix.BPF_PROG_TYPE_CGROUP_SOCK
+	KABPFProgTypeLwtIn                 KABPFProgType = unix.BPF_PROG_TYPE_LWT_IN
+	KABPFProgTypeLwtOut                KABPFProgType = unix.BPF_PROG_TYPE_LWT_OUT
+	KABPFProgTypeLwtXmit               KABPFProgType = unix.BPF_PROG_TYPE_LWT_XMIT
+	KABPFProgTypeSockOps               KABPFProgType = unix.BPF_PROG_TYPE_SOCK_OPS
+	KABPFProgTypeSkSKB                 KABPFProgType = unix.BPF_PROG_TYPE_SK_SKB
+	KABPFProgTypeCgroupDevice          KABPFProgType = unix.BPF_PROG_TYPE_CGROUP_DEVICE
+	KABPFProgTypeSkMsg                 KABPFProgType = unix.BPF_PROG_TYPE_SK_MSG
+	KABPFProgTypeRawTracepoint         KABPFProgType = unix.BPF_PROG_TYPE_RAW_TRACEPOINT
+	KABPFProgTypeCgroupSockAddr        KABPFProgType = unix.BPF_PROG_TYPE_CGROUP_SOCK_ADDR
+	KABPFProgTypeLwtSeg6Local          KABPFProgType = unix.BPF_PROG_TYPE_LWT_SEG6LOCAL
+	KABPFProgTypeLircMode2             KABPFProgType = unix.BPF_PROG_TYPE_LIRC_MODE2
+	KABPFProgTypeSkReuseport           KABPFProgType = unix.BPF_PROG_TYPE_SK_REUSEPORT
+	KABPFProgTypeFlowDissector         KABPFProgType = unix.BPF_PROG_TYPE_FLOW_DISSECTOR
+	KABPFProgTypeCgroupSysctl          KABPFProgType = unix.BPF_PROG_TYPE_CGROUP_SYSCTL
+	KABPFProgTypeRawTracepointWritable KABPFProgType = unix.BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE
+	KABPFProgTypeCgroupSockopt         KABPFProgType = unix.BPF_PROG_TYPE_CGROUP_SOCKOPT
+	KABPFProgTypeTracing               KABPFProgType = unix.BPF_PROG_TYPE_TRACING
+	KABPFProgTypeStructOps             KABPFProgType = unix.BPF_PROG_TYPE_STRUCT_OPS
+	KABPFProgTypeExt                   KABPFProgType = unix.BPF_PROG_TYPE_EXT
+	KABPFProgTypeLSM                   KABPFProgType = unix.BPF_PROG_TYPE_LSM
+	KABPFProgTypeSkLookup              KABPFProgType = unix.BPF_PROG_TYPE_SK_LOOKUP
 )
 
 // KubeArmor BPFObject wrapper structure
@@ -217,7 +217,7 @@ func (m *KABPFMap) Object() *KABPFObject {
 
 // Get program fd
 func (p *KABPFProgram) FD() int {
-	return int(p.bpfProg.GetFd())
+	return p.bpfProg.GetFd()
 }
 
 // Get program name
