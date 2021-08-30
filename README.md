@@ -38,17 +38,17 @@ However, currently, the most common is to use the `libbpf.a` (static version). T
 
   This will generate the static `libbpf.a` file and the `vmlinux.h` and `bpf/*.h` headers inside `./include`.
 
-- Now one is able to make correct use of this library.
+- Now one is able to make correct use of this library. Be sure to use absolute paths.
 
-  `❯ CGO_LDFLAGS="./include/libbpf.a" go get github.com/kubearmor/libbpf`
+  `❯ CGO_LDFLAGS="/path_to_this_repo/include/libbpf.a" CGO_CFLAGS="-I /path_to_this_repo/include" go get github.com/kubearmor/libbpf`
 
 The same environment variable need to be set when building the final application that uses this library.
 
-`❯ CGO_LDFLAGS="./include/libbpf.a" go build`
+`❯ CGO_LDFLAGS="/path_to_this_repo/include/libbpf.a" CGO_CFLAGS="-I /path_to_this_repo/include" go build`
 
 ---
 
-The use cases inside `./tests` can be tested using make.
+The use cases inside [tests](tests/) can be tested using make.
 
 `❯ make run-tests`
 
@@ -76,4 +76,4 @@ func (pme *XXMapElem) MapName() string {
 }
 ```
 
-Examples can be found in [tests](tests/).
+Examples can also be found in [tests](tests/).
