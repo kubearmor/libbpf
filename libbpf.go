@@ -217,7 +217,7 @@ func (m *KABPFMap) Object() *KABPFObject {
 
 // Get program fd
 func (p *KABPFProgram) FD() int {
-	return int(p.bpfProg.GetFd())
+	return p.bpfProg.GetFd()
 }
 
 // Get program name
