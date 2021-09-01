@@ -274,3 +274,8 @@ func (l *KABPFLink) FunctionName() string {
 func (l *KABPFLink) Program() *KABPFProgram {
 	return l.bpfProg
 }
+
+// Detach link
+func (l *KABPFLink) Detach() error {
+	return nil
+}
