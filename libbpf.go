@@ -78,8 +78,8 @@ type KABPFProgram struct {
 
 // KubeArmor BPFLink wrapper structure
 type KABPFLink struct {
-	bpfProg  *KABPFProgram
-	funcName string
+	bpfProg   *KABPFProgram
+	eventName string
 
 	bpfLink *libbpfgo.BPFLink
 }
@@ -230,33 +230,75 @@ func (p *KABPFProgram) GetType() KABPFProgType {
 	return KABPFProgType(p.bpfProg.GetType())
 }
 
-// Attach Kprobe
-// This should be used for kernels > 4.17
-func (p *KABPFProgram) AttachKprobe(funcName string) (*KABPFLink, error) {
-	l, err := p.bpfProg.AttachKprobe(funcName)
+// Attach LSM
+func (p *KABPFProgram) AttachLSM() (*KABPFLink, error) {
+	l, err := p.bpfProg.AttachLSM()
 	if err != nil {
 		return nil, err
 	}
 
 	return &KABPFLink{
-		bpfProg:  p,
-		funcName: funcName,
-		bpfLink:  l,
+		bpfProg:   p,
+		eventName: "",
+		bpfLink:   l,
+	}, nil
+}
+
+// Attach Kprobe
+// This should be used for kernels > 4.17
+func (p *KABPFProgram) AttachKprobe(eventName string) (*KABPFLink, error) {
+	l, err := p.bpfProg.AttachKprobe(eventName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &KABPFLink{
+		bpfProg:   p,
+		eventName: eventName,
+		bpfLink:   l,
 	}, nil
 }
 
 // Attach Kretprobe
 // This should be used for kernels > 4.17
-func (p *KABPFProgram) AttachKretprobe(funcName string) (*KABPFLink, error) {
-	l, err := p.bpfProg.AttachKretprobe(funcName)
+func (p *KABPFProgram) AttachKretprobe(eventName string) (*KABPFLink, error) {
+	l, err := p.bpfProg.AttachKretprobe(eventName)
 	if err != nil {
 		return nil, err
 	}
 
 	return &KABPFLink{
-		bpfProg:  p,
-		funcName: funcName,
-		bpfLink:  l,
+		bpfProg:   p,
+		eventName: eventName,
+		bpfLink:   l,
+	}, nil
+}
+
+// Attach Raw Tracepoint
+func (p *KABPFProgram) AttachRawTracepoint(eventName string) (*KABPFLink, error) {
+	l, err := p.bpfProg.AttachRawTracepoint(eventName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &KABPFLink{
+		bpfProg:   p,
+		eventName: eventName,
+		bpfLink:   l,
+	}, nil
+}
+
+// Attach Tracepoint
+func (p *KABPFProgram) AttachTracepoint(eventName string) (*KABPFLink, error) {
+	l, err := p.bpfProg.AttachTracepoint(eventName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &KABPFLink{
+		bpfProg:   p,
+		eventName: eventName,
+		bpfLink:   l,
 	}, nil
 }
 
@@ -266,8 +308,8 @@ func (p *KABPFProgram) Object() *KABPFObject {
 }
 
 // Get attached function name
-func (l *KABPFLink) FunctionName() string {
-	return l.funcName
+func (l *KABPFLink) EventName() string {
+	return l.eventName
 }
 
 // Get program pointer to which link belongs
