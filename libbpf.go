@@ -12,8 +12,10 @@ import (
 
 import "C"
 
+// KABPFProgType type
 type KABPFProgType uint32
 
+// KABPFProgType constants
 const (
 	KABPFProgTypeUnspec                KABPFProgType = unix.BPF_PROG_TYPE_UNSPEC
 	KABPFProgTypeSocketFilter          KABPFProgType = unix.BPF_PROG_TYPE_SOCKET_FILTER
@@ -326,7 +328,7 @@ func (p *KABPFProgram) Object() *KABPFObject {
 	return p.bpfObj
 }
 
-// Get attached function name
+// Get attached event name
 func (l *KABPFLink) EventName() string {
 	return l.eventName
 }
