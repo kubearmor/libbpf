@@ -12,8 +12,10 @@ import (
 
 import "C"
 
+// KABPFProgType type
 type KABPFProgType uint32
 
+// KABPFProgType constants
 const (
 	KABPFProgTypeUnspec                KABPFProgType = unix.BPF_PROG_TYPE_UNSPEC
 	KABPFProgTypeSocketFilter          KABPFProgType = unix.BPF_PROG_TYPE_SOCKET_FILTER
@@ -48,6 +50,19 @@ const (
 	KABPFProgTypeSkLookup              KABPFProgType = unix.BPF_PROG_TYPE_SK_LOOKUP
 )
 
+// KABPFLinkType type
+type KABPFLinkType uint32
+
+// KABPFLinkType constants
+const (
+	KABPFLinkTypeUnspec KABPFLinkType = iota
+	KABPFLinkTypeLSM
+	KABPFLinkTypeKprobe
+	KABPFLinkTypeKretprobe
+	KABPFLinkTypeRawTracepoint
+	KABPFLinkTypeTracepoint
+)
+
 // KubeArmor BPFObject wrapper structure
 type KABPFObject struct {
 	bpfObj *libbpfgo.Module
@@ -80,6 +95,7 @@ type KABPFProgram struct {
 type KABPFLink struct {
 	bpfProg   *KABPFProgram
 	eventName string
+	eventType KABPFLinkType
 
 	bpfLink *libbpfgo.BPFLink
 }
@@ -240,6 +256,7 @@ func (p *KABPFProgram) AttachLSM() (*KABPFLink, error) {
 	return &KABPFLink{
 		bpfProg:   p,
 		eventName: "",
+		eventType: KABPFLinkTypeLSM,
 		bpfLink:   l,
 	}, nil
 }
@@ -255,6 +272,7 @@ func (p *KABPFProgram) AttachKprobe(eventName string) (*KABPFLink, error) {
 	return &KABPFLink{
 		bpfProg:   p,
 		eventName: eventName,
+		eventType: KABPFLinkTypeKprobe,
 		bpfLink:   l,
 	}, nil
 }
@@ -270,6 +288,7 @@ func (p *KABPFProgram) AttachKretprobe(eventName string) (*KABPFLink, error) {
 	return &KABPFLink{
 		bpfProg:   p,
 		eventName: eventName,
+		eventType: KABPFLinkTypeKretprobe,
 		bpfLink:   l,
 	}, nil
 }
@@ -284,6 +303,7 @@ func (p *KABPFProgram) AttachRawTracepoint(eventName string) (*KABPFLink, error)
 	return &KABPFLink{
 		bpfProg:   p,
 		eventName: eventName,
+		eventType: KABPFLinkTypeRawTracepoint,
 		bpfLink:   l,
 	}, nil
 }
@@ -298,6 +318,7 @@ func (p *KABPFProgram) AttachTracepoint(eventName string) (*KABPFLink, error) {
 	return &KABPFLink{
 		bpfProg:   p,
 		eventName: eventName,
+		eventType: KABPFLinkTypeTracepoint,
 		bpfLink:   l,
 	}, nil
 }
@@ -307,9 +328,14 @@ func (p *KABPFProgram) Object() *KABPFObject {
 	return p.bpfObj
 }
 
-// Get attached function name
+// Get attached event name
 func (l *KABPFLink) EventName() string {
 	return l.eventName
+}
+
+// Get attached event type
+func (l *KABPFLink) EventType() KABPFLinkType {
+	return l.eventType
 }
 
 // Get program pointer to which link belongs
