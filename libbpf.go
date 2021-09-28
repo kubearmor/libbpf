@@ -343,7 +343,7 @@ func (l *KABPFLink) Program() *KABPFProgram {
 	return l.bpfProg
 }
 
-// Detach link
-func (l *KABPFLink) Detach() error {
-	return nil
+// Destroy link
+func (l *KABPFLink) Destroy() error {
+	return l.bpfLink.Destroy()
 }
