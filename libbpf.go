@@ -309,8 +309,8 @@ func (p *KABPFProgram) AttachRawTracepoint(eventName string) (*KABPFLink, error)
 }
 
 // Attach Tracepoint
-func (p *KABPFProgram) AttachTracepoint(eventName string) (*KABPFLink, error) {
-	l, err := p.bpfProg.AttachTracepoint(eventName)
+func (p *KABPFProgram) AttachTracepoint(category, eventName string) (*KABPFLink, error) {
+	l, err := p.bpfProg.AttachTracepoint(category, eventName)
 	if err != nil {
 		return nil, err
 	}
@@ -343,7 +343,7 @@ func (l *KABPFLink) Program() *KABPFProgram {
 	return l.bpfProg
 }
 
-// Detach link
-func (l *KABPFLink) Detach() error {
-	return nil
+// Destroy link
+func (l *KABPFLink) Destroy() error {
+	return l.bpfLink.Destroy()
 }
