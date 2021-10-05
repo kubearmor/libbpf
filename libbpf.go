@@ -100,6 +100,13 @@ type KABPFLink struct {
 	bpfLink *libbpfgo.BPFLink
 }
 
+//
+type KABPFRingBuffer struct {
+	bpfMap *KABPFMap
+
+	bpfRingBuffer *libbpfgo.RingBuffer
+}
+
 // Open object file
 func OpenObjectFromFile(bpfObjFile string) (*KABPFObject, error) {
 	mod, err := libbpfgo.NewModuleFromFile(bpfObjFile)
@@ -145,6 +152,29 @@ func (o *KABPFObject) FindProgramByName(progName string) (*KABPFProgram, error) 
 	return &KABPFProgram{
 		bpfObj:  o,
 		bpfProg: p,
+	}, nil
+}
+
+// Initialize ring buffer
+func (o *KABPFObject) InitRingBuf(mapName string, eventsChan chan []byte) (*KABPFRingBuffer, error) {
+	var err error
+	var m *KABPFMap
+
+	m, err = o.FindMapByName(mapName)
+	if err != nil {
+		return nil, err
+	}
+
+	var rb *libbpfgo.RingBuffer
+
+	rb, err = o.bpfObj.InitRingBuf(m.Name(), eventsChan)
+	if err != nil {
+		return nil, err
+	}
+
+	return &KABPFRingBuffer{
+		bpfMap:        m,
+		bpfRingBuffer: rb,
 	}, nil
 }
 
@@ -229,6 +259,11 @@ func (m *KABPFMap) DeleteElement(elem KABPFMapElement) error {
 // Get object pointer to which map belongs
 func (m *KABPFMap) Object() *KABPFObject {
 	return m.bpfObj
+}
+
+// Initialize ring buffer
+func (m *KABPFMap) InitRingBuf(eventsChan chan []byte) (*KABPFRingBuffer, error) {
+	return m.bpfObj.InitRingBuf(m.Name(), eventsChan)
 }
 
 // Get program fd
@@ -346,4 +381,24 @@ func (l *KABPFLink) Program() *KABPFProgram {
 // Destroy link
 func (l *KABPFLink) Destroy() error {
 	return l.bpfLink.Destroy()
+}
+
+// Start to poll ring buffer
+func (rb *KABPFRingBuffer) StartPoll() {
+	rb.bpfRingBuffer.Start()
+}
+
+// Stop to poll ring buffer
+func (rb *KABPFRingBuffer) StopPoll() {
+	rb.bpfRingBuffer.Stop()
+}
+
+// Free ring buffer
+func (rb *KABPFRingBuffer) Free() {
+	rb.bpfRingBuffer.Close()
+}
+
+// Get map pointer to which ring buffer relates
+func (rb *KABPFRingBuffer) Map() *KABPFMap {
+	return rb.bpfMap
 }
