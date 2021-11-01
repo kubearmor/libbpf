@@ -100,7 +100,7 @@ type KABPFLink struct {
 	bpfLink *libbpfgo.BPFLink
 }
 
-//
+// KubeArmor RingBuffer wrapper structure
 type KABPFRingBuffer struct {
 	bpfMap *KABPFMap
 
