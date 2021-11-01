@@ -100,11 +100,18 @@ type KABPFLink struct {
 	bpfLink *libbpfgo.BPFLink
 }
 
-//
+// KubeArmor RingBuffer wrapper structure
 type KABPFRingBuffer struct {
 	bpfMap *KABPFMap
 
 	bpfRingBuffer *libbpfgo.RingBuffer
+}
+
+// KubeArmor PerfBuffer wrapper structure
+type KABPFPerfBuffer struct {
+	bpfMap *KABPFMap
+
+	bpfPerfBuffer *libbpfgo.PerfBuffer
 }
 
 // Open object file
@@ -175,6 +182,29 @@ func (o *KABPFObject) InitRingBuf(mapName string, eventsChan chan []byte) (*KABP
 	return &KABPFRingBuffer{
 		bpfMap:        m,
 		bpfRingBuffer: rb,
+	}, nil
+}
+
+// Initialize perf buffer
+func (o *KABPFObject) InitPerfBuf(mapName string, eventsChan chan []byte, lostChan chan uint64, pageCnt int) (*KABPFPerfBuffer, error) {
+	var err error
+	var m *KABPFMap
+
+	m, err = o.FindMapByName(mapName)
+	if err != nil {
+		return nil, err
+	}
+
+	var pb *libbpfgo.PerfBuffer
+
+	pb, err = o.bpfObj.InitPerfBuf(m.Name(), eventsChan, lostChan, pageCnt)
+	if err != nil {
+		return nil, err
+	}
+
+	return &KABPFPerfBuffer{
+		bpfMap:        m,
+		bpfPerfBuffer: pb,
 	}, nil
 }
 
@@ -264,6 +294,11 @@ func (m *KABPFMap) Object() *KABPFObject {
 // Initialize ring buffer
 func (m *KABPFMap) InitRingBuf(eventsChan chan []byte) (*KABPFRingBuffer, error) {
 	return m.bpfObj.InitRingBuf(m.Name(), eventsChan)
+}
+
+// Initialize perf buffer
+func (m *KABPFMap) InitPerfBuf(eventsChan chan []byte, lostChan chan uint64, pageCnt int) (*KABPFPerfBuffer, error) {
+	return m.bpfObj.InitPerfBuf(m.Name(), eventsChan, lostChan, pageCnt)
 }
 
 // Get program fd
@@ -401,4 +436,24 @@ func (rb *KABPFRingBuffer) Free() {
 // Get map pointer to which ring buffer relates
 func (rb *KABPFRingBuffer) Map() *KABPFMap {
 	return rb.bpfMap
+}
+
+// Start to poll perf buffer
+func (pb *KABPFPerfBuffer) StartPoll() {
+	pb.bpfPerfBuffer.Start()
+}
+
+// Stop to poll perf buffer
+func (pb *KABPFPerfBuffer) StopPoll() {
+	pb.bpfPerfBuffer.Stop()
+}
+
+// Free perf buffer
+func (pb *KABPFPerfBuffer) Free() {
+	pb.bpfPerfBuffer.Close()
+}
+
+// Get map pointer to which perf buffer relates
+func (pb *KABPFPerfBuffer) Map() *KABPFMap {
+	return pb.bpfMap
 }
